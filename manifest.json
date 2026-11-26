@@ -22,5 +22,14 @@
         "type": "image/png",
         "purpose": "any maskable"
       }
+    ],
+    "shortcuts": [
+      {
+        "name": "Ouvir Músicas",
+        "short_name": "Play",
+        "description": "Abre o player de música diretamente",
+        "url": "./index.html?action=play",
+        "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      }
     ]
   }
