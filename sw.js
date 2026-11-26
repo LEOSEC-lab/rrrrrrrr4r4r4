@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aurastream-v2';
+const CACHE_NAME = 'aurastream-rgb-v3';
 const ASSETS = [
   './index.html',
   './manifest.json'
