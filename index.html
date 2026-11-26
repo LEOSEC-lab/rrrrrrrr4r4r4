@@ -226,7 +226,6 @@
             gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gainNode.connect(audioCtx.destination);
 
-            // Simulação de acorde procedural contínuo
             oscillator = audioCtx.createOscillator();
             oscillator.type = 'sine';
             oscillator.frequency.setValueAtTime(chord[0], audioCtx.currentTime);
@@ -314,7 +313,6 @@
             tracks.push({ title: file.name.replace(/\.[^/.]+$/, ""), artist: "Arquivo Local", duration: 180, type: "local", url: url });
             renderTracks();
             
-            // Adicionar na aba de biblioteca
             const lib = document.getElementById('library-list');
             lib.innerHTML += `
                 <div class="bg-card border border-gray-800 p-4 rounded-2xl flex items-center justify-between">

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aurastream-v1';
+const CACHE_NAME = 'aurastream-v2';
 const ASSETS = [
   './index.html',
   './manifest.json'
@@ -32,7 +32,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request).catch(() => {
-        // Fallback básico caso esteja offline e o recurso não esteja em cache
         return caches.match('./index.html');
       });
     })

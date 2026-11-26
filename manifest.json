@@ -1,21 +1,330 @@
-{
-    "name": "AuraStream",
-    "short_name": "AuraStream",
-    "description": "Seu player de música PWA moderno",
-    "start_url": "./index.html",
-    "display": "standalone",
-    "background_color": "#0d1117",
-    "theme_color": "#8b5cf6",
-    "icons": [
-      {
-        "src": "icon-192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "icon-512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ]
-  }
+
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStream - Music Player PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darker: '#0a0d14',
+                        card: '#161b22',
+                        primary: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darker text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+    <!-- Top Bar -->
+    <header class="flex justify-between items-center px-6 py-4 bg-darker/80 backdrop-blur border-b border-gray-800 shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+                <i class="fa-solid fa-waveform text-white text-lg"></i>
+            </div>
+            <span class="text-xl font-bold tracking-wider bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">AuraStream</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span id="network-status" class="px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i class="fa-solid fa-circle text-[8px] mr-1"></i> Online
+            </span>
+            <button id="install-btn" class="hidden px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-purple-600/30">
+                <i class="fa-solid fa-download mr-2"></i> Instalar App
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-card/50 border-r border-gray-800 p-6 hidden md:flex flex-col justify-between shrink-0">
+            <nav class="space-y-2">
+                <a href="#" onclick="switchTab('home')" id="nav-home" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition">
+                    <i class="fa-solid fa-house w-5"></i><span>Início</span>
+                </a>
+                <a href="#" onclick="switchTab('library')" id="nav-library" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition">
+                    <i class="fa-solid fa-music w-5"></i><span>Minhas Músicas</span>
+                </a>
+                <label class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up w-5"></i><span>Importar Arquivo</span>
+                    <input type="file" id="local-upload" accept="audio/*" class="hidden" onchange="handleFileUpload(event)">
+                </label>
+            </nav>
+            <div class="p-4 bg-gradient-to-b from-purple-900/20 to-indigo-900/10 border border-purple-500/20 rounded-2xl text-center">
+                <i class="fa-solid fa-headphones text-purple-400 text-2xl mb-2"></i>
+                <h4 class="text-sm font-semibold text-white">Aura Web Engine</h4>
+                <p class="text-xs text-gray-400 mt-1">Sintetizador e decodificador nativo ativado.</p>
+            </div>
+        </aside>
+
+        <!-- Dynamic View -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+            <div id="view-home" class="space-y-6">
+                <div class="bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-card border border-purple-500/20 rounded-3xl p-8 relative overflow-hidden">
+                    <div class="relative z-10 max-w-lg">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">Destaque do Dia</span>
+                        <h1 class="text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white">Sons da Aurora</h1>
+                        <p class="text-gray-300 text-sm mb-6">Mergulhe em melodias relaxantes e sintetizadas em tempo real para foco e descanso.</p>
+                        <button onclick="playTrack(0)" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-play"></i><span>Ouvir Agora</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-bold text-white">Faixas Disponíveis</h2>
+                <div id="track-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+            </div>
+
+            <div id="view-library" class="hidden space-y-6">
+                <h2 class="text-xl font-bold text-white">Minha Biblioteca & Uploads</h2>
+                <div id="library-list" class="space-y-3">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bottom Audio Player Bar -->
+    <footer class="bg-card border-t border-gray-800 p-4 shrink-0 flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Track Info -->
+        <div class="flex items-center space-x-4 w-full md:w-1/4">
+            <div class="w-12 h-12 bg-purple-900/30 border border-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 font-bold shrink-0" id="current-art">
+                <i class="fa-solid fa-compact-disc animate-spin"></i>
+            </div>
+            <div class="truncate">
+                <h4 id="current-title" class="text-sm font-semibold text-white truncate">Selecione uma faixa</h4>
+                <p id="current-artist" class="text-xs text-gray-400 truncate">AuraStream Engine</p>
+            </div>
+        </div>
+
+        <!-- Controls & Progress -->
+        <div class="flex flex-col items-center w-full md:w-2/4 space-y-2">
+            <div class="flex items-center space-x-6">
+                <button onclick="toggleShuffle()" id="shuffle-btn" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-shuffle"></i></button>
+                <button onclick="prevTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-backward-step text-lg"></i></button>
+                <button onclick="togglePlay()" id="play-btn" class="w-10 h-10 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white transition shadow-md shadow-purple-600/30">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <button onclick="nextTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-forward-step text-lg"></i></button>
+                <button onclick="toggleRepeat()" id="repeat-btn" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="flex items-center space-x-3 w-full max-w-md">
+                <span id="time-current" class="text-xs text-gray-500">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" max="100" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500" oninput="seekTrack(this.value)">
+                <span id="time-duration" class="text-xs text-gray-500">3:00</span>
+            </div>
+        </div>
+
+        <!-- Volume & Extras -->
+        <div class="flex items-center justify-end space-x-3 w-full md:w-1/4">
+            <i class="fa-solid fa-volume-high text-gray-400"></i>
+            <input type="range" min="0" max="1" step="0.05" value="0.8" class="w-24 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500" onchange="setVolume(this.value)">
+        </div>
+    </footer>
+
+    <!-- Script de Aplicação e Áudio -->
+    <script>
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').classList.remove('hidden');
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('install-btn').classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+        }
+
+        // Network Monitor
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        function updateNetworkStatus() {
+            const statusEl = document.getElementById('network-status');
+            if (navigator.onLine) {
+                statusEl.className = "px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                statusEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1"></i> Online';
+            } else {
+                statusEl.className = "px-3 py-1 text-xs font-medium rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                statusEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1"></i> Offline';
+            }
+        }
+
+        // Playlist & Player State
+        const tracks = [
+            { title: "Sons da Aurora", artist: "AuraSynth Engine", duration: 180, type: "synth", chord: [261.63, 329.63, 392.00] },
+            { title: "Nebulosa Lo-Fi", artist: "AuraSynth Engine", duration: 210, type: "synth", chord: [220.00, 261.63, 329.63] },
+            { title: "Pulso Synthwave", artist: "AuraSynth Engine", duration: 195, type: "synth", chord: [174.61, 220.00, 261.63] },
+            { title: "Piano Sereno", artist: "AuraSynth Engine", duration: 160, type: "synth", chord: [196.00, 246.94, 293.66] }
+        ];
+
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let audioCtx = null;
+        let oscillator = null;
+        let gainNode = null;
+        let timerInterval = null;
+        let currentTime = 0;
+
+        function renderTracks() {
+            const listContainer = document.getElementById('track-list');
+            listContainer.innerHTML = tracks.map((t, idx) => `
+                <div onclick="playTrack(${idx})" class="bg-card border border-gray-800/80 hover:border-purple-500/40 p-4 rounded-2xl flex items-center justify-between cursor-pointer transition group">
+                    <div class="flex items-center space-x-3 truncate">
+                        <div class="w-10 h-10 bg-purple-600/10 text-purple-400 rounded-xl flex items-center justify-center font-bold group-hover:bg-purple-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-play text-xs"></i>
+                        </div>
+                        <div class="truncate">
+                            <h4 class="text-sm font-semibold text-white truncate">${t.title}</h4>
+                            <p class="text-xs text-gray-400 truncate">${t.artist}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-gray-500 ml-2">3:00</span>
+                </div>
+            `).join('');
+        }
+
+        function playTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[index];
+            document.getElementById('current-title').innerText = track.title;
+            document.getElementById('current-artist').innerText = track.artist;
+            
+            stopAudio();
+            startSynthAudio(track.chord);
+            isPlaying = true;
+            document.getElementById('play-btn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+            startTimer();
+        }
+
+        function startSynthAudio(chord) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator = audioCtx.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(chord[0], audioCtx.currentTime);
+            oscillator.connect(gainNode);
+            oscillator.start();
+        }
+
+        function stopAudio() {
+            if (oscillator) {
+                try { oscillator.stop(); } catch(e){}
+                oscillator.disconnect();
+                oscillator = null;
+            }
+            clearInterval(timerInterval);
+            currentTime = 0;
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopAudio();
+                isPlaying = false;
+                document.getElementById('play-btn').innerHTML = '<i class="fa-solid fa-play"></i>';
+            } else {
+                playTrack(currentTrackIndex);
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            currentTime = 0;
+            timerInterval = setInterval(() => {
+                currentTime++;
+                const progress = (currentTime / tracks[currentTrackIndex].duration) * 100;
+                document.getElementById('progress-bar').value = progress;
+                
+                let mins = Math.floor(currentTime / 60);
+                let secs = currentTime % 60;
+                document.getElementById('time-current').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                if (currentTime >= tracks[currentTrackIndex].duration) {
+                    nextTrack();
+                }
+            }, 1000);
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
+
+        function setVolume(val) {
+            if (gainNode && audioCtx) {
+                gainNode.gain.setValueAtTime(val, audioCtx.currentTime);
+            }
+        }
+
+        function seekTrack(val) {
+            currentTime = Math.floor((val / 100) * tracks[currentTrackIndex].duration);
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-library').classList.add('hidden');
+            document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition";
+            document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition";
+
+            if (tab === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition";
+            } else {
+                document.getElementById('view-library').classList.remove('hidden');
+                document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition";
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            tracks.push({ title: file.name.replace(/\.[^/.]+$/, ""), artist: "Arquivo Local", duration: 180, type: "local", url: url });
+            renderTracks();
+            
+            const lib = document.getElementById('library-list');
+            lib.innerHTML += `
+                <div class="bg-card border border-gray-800 p-4 rounded-2xl flex items-center justify-between">
+                    <span class="text-sm font-semibold text-white">${file.name}</span>
+                    <span class="text-xs text-purple-400">Pronto para reprodução</span>
+                </div>
+            `;
+            switchTab('library');
+        }
+
+        renderTracks();
+    </script>
+</body>
+</html>
