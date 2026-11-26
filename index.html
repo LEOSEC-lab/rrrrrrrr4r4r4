@@ -1,323 +1,458 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraStream RGB - Music Player</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ec4899">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Arquivo CSS Separado -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="FPS BOOST Mobile - Gaming performance center">
+  <title>FPS BOOST</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ICON DO APP -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-darker text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden selection:bg-pink-500 selection:text-white">
+<body>
 
-    <!-- Splash Screen / Intro -->
-    <div id="splash-screen" class="fixed inset-0 z-50 bg-[#050508] flex flex-col items-center justify-center transition-opacity duration-700">
-        <div class="relative w-24 h-24 mb-6 rounded-3xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 p-1 animate-pulse shadow-2xl shadow-pink-500/50">
-            <div class="w-full h-full bg-[#050508] rounded-[22px] flex items-center justify-center">
-                <i class="fa-solid fa-headphones text-4xl rgb-text"></i>
-            </div>
-        </div>
-        <h1 class="text-2xl font-black tracking-widest uppercase bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">AuraStream RGB</h1>
-        <p class="text-xs text-gray-500 mt-2 tracking-widest uppercase">Inicializando Sistema Sonoro...</p>
-    </div>
+  <div class="app">
 
-    <!-- Top Bar -->
-    <header class="flex justify-between items-center px-6 py-4 bg-[#050508]/90 backdrop-blur border-b border-gray-800/80 shrink-0 z-20">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-tr from-pink-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-pink-500/30">
-                <i class="fa-solid fa-waveform text-white text-lg"></i>
-            </div>
-            <span class="text-xl font-black tracking-wider rgb-text">AuraStream <span class="text-xs px-2 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400">RGB</span></span>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">
+          <span>⚡</span>
         </div>
-        <div class="flex items-center space-x-4">
-            <span id="network-status" class="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <i class="fa-solid fa-circle text-[8px] mr-1"></i> Online
-            </span>
-            <button id="install-btn" class="hidden px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl text-sm font-bold transition shadow-lg shadow-pink-600/30">
-                <i class="fa-solid fa-download mr-2"></i> Instalar App
-            </button>
+        <div>
+          <h1>FPS <span>BOOST</span></h1>
+          <p>MOBILE PERFORMANCE</p>
         </div>
+      </div>
+
+      <button class="icon-button" id="settingsShortcut" aria-label="Configurações">
+        ⚙
+      </button>
     </header>
 
-    <!-- Main Content -->
-    <div class="flex flex-1 overflow-hidden">
-        <aside class="w-64 bg-[#12121a]/60 border-r border-gray-800/80 p-6 hidden md:flex flex-col justify-between shrink-0">
-            <nav class="space-y-3">
-                <a href="#" onclick="switchTab('home')" id="nav-home" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition">
-                    <i class="fa-solid fa-house w-5"></i><span>Início</span>
-                </a>
-                <a href="#" onclick="switchTab('library')" id="nav-library" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition">
-                    <i class="fa-solid fa-music w-5"></i><span>Minhas Músicas</span>
-                </a>
-                <label class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition cursor-pointer">
-                    <i class="fa-solid fa-cloud-arrow-up w-5"></i><span>Importar Arquivo</span>
-                    <input type="file" id="local-upload" accept="audio/*" class="hidden" onchange="handleFileUpload(event)">
-                </label>
-            </nav>
-            <div class="p-4 bg-gradient-to-b from-pink-900/20 via-purple-900/10 to-cyan-900/20 border rgb-border rounded-2xl text-center">
-                <i class="fa-solid fa-bolt rgb-text text-xl mb-2"></i>
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider">Modo RGB Ativo</h4>
-                <p class="text-[10px] text-gray-400 mt-1">Sintetizador e áudio dinâmico prontos.</p>
-            </div>
-        </aside>
+    <main id="mainContent">
 
-        <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
-            <div id="view-home" class="space-y-6">
-                <div class="relative rgb-border border rounded-3xl p-8 overflow-hidden shadow-2xl">
-                    <div class="absolute inset-0 z-0">
-                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80" alt="Banner" class="w-full h-full object-cover opacity-20 filter brightness-75">
-                        <div class="absolute inset-0 bg-gradient-to-r from-[#050508] via-[#050508]/80 to-transparent"></div>
-                    </div>
-                    <div class="relative z-10 max-w-lg">
-                        <span class="text-xs font-bold uppercase tracking-widest text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/30">Destaque RGB</span>
-                        <h1 class="text-3xl md:text-5xl font-black mt-4 mb-2 text-white">Cyber Aurora</h1>
-                        <p class="text-gray-300 text-sm mb-6">Sons sintetizados em alta frequência com imersão visual total e modo offline.</p>
-                        <button onclick="playTrack(0)" class="px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold rounded-xl shadow-lg shadow-pink-600/30 transition flex items-center space-x-2">
-                            <i class="fa-solid fa-play"></i><span>Ouvir Agora</span>
-                        </button>
-                    </div>
-                </div>
+      <!-- HOME -->
+      <section class="page active" id="homePage">
 
-                <h2 class="text-xl font-bold text-white flex items-center"><i class="fa-solid fa-fire mr-2 text-pink-500"></i> Faixas Disponíveis</h2>
-                <div id="track-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </div>
+        <div class="hero">
+          <div class="hero-label">
+            <span class="pulse"></span>
+            GAMING CENTER
+          </div>
 
-            <div id="view-library" class="hidden space-y-6">
-                <h2 class="text-xl font-bold text-white flex items-center"><i class="fa-solid fa-folder-open mr-2 text-cyan-400"></i> Minha Biblioteca & Uploads</h2>
-                <div id="library-list" class="space-y-3"></div>
+          <h2>YOUR GAME.<br><span>YOUR POWER.</span></h2>
+
+          <p>Prepare seu celular para sua próxima partida.</p>
+
+          <div class="hero-art">
+            <div class="circle circle1"></div>
+            <div class="circle circle2"></div>
+            <div class="hero-lightning">⚡</div>
+            <div class="hero-chip">FPS BOOST</div>
+          </div>
+
+          <button class="primary-button" data-page="boost">
+            <span>⚡</span> ABRIR GAME BOOST
+          </button>
+        </div>
+
+        <div class="section-heading">
+          <h3>TOOLS CENTER</h3>
+          <span>QUICK ACCESS</span>
+        </div>
+
+        <div class="tool-grid">
+
+          <button class="tool-card" data-page="boost">
+            <div class="tool-icon blue">⚡</div>
+            <div class="tool-name">Game Boost</div>
+            <small>Preparação gamer</small>
+          </button>
+
+          <button class="tool-card" data-page="games">
+            <div class="tool-icon purple">🎮</div>
+            <div class="tool-name">Games</div>
+            <small>Seus jogos</small>
+          </button>
+
+          <button class="tool-card" data-page="tips">
+            <div class="tool-icon green">✦</div>
+            <div class="tool-name">FPS Tips</div>
+            <small>Dicas de desempenho</small>
+          </button>
+
+          <button class="tool-card" data-page="device">
+            <div class="tool-icon orange">📱</div>
+            <div class="tool-name">Device</div>
+            <small>Informações</small>
+          </button>
+
+        </div>
+
+        <div class="section-heading">
+          <h3>PERFORMANCE GUIDE</h3>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">🔥</div>
+          <div>
+            <h4>Evite superaquecimento</h4>
+            <p>O calor pode fazer o celular reduzir automaticamente o desempenho para proteger o hardware.</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">🔋</div>
+          <div>
+            <h4>Confira sua bateria</h4>
+            <p>Alguns dispositivos limitam o desempenho quando a bateria está baixa ou o modo de economia está ativo.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- BOOST -->
+      <section class="page" id="boostPage">
+
+        <div class="page-heading">
+          <span class="eyebrow">PERFORMANCE CENTER</span>
+          <h2>GAME <span>BOOST</span></h2>
+          <p>Checklist para preparar seu dispositivo antes de jogar.</p>
+        </div>
+
+        <div class="boost-panel">
+          <div class="boost-symbol">⚡</div>
+          <h3>GAMING PREPARATION</h3>
+          <p>Complete o checklist antes de iniciar seu jogo.</p>
+
+          <div class="progress-track">
+            <div id="progressBar"></div>
+          </div>
+
+          <p id="progressText">0/5 itens concluídos</p>
+        </div>
+
+        <div class="checklist" id="boostChecklist">
+
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-icon">📶</span>
+            <span class="check-text">
+              <strong>Verificar conexão</strong>
+              <small>Confira se sua rede está estável.</small>
+            </span>
+          </label>
+
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-icon">🔋</span>
+            <span class="check-text">
+              <strong>Verificar economia de energia</strong>
+              <small>Confira se a economia de bateria está limitando o jogo.</small>
+            </span>
+          </label>
+
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-icon">🌡️</span>
+            <span class="check-text">
+              <strong>Verificar temperatura</strong>
+              <small>Evite jogar com o dispositivo muito quente.</small>
+            </span>
+          </label>
+
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-icon">💾</span>
+            <span class="check-text">
+              <strong>Verificar armazenamento</strong>
+              <small>Confira se há espaço livre suficiente.</small>
+            </span>
+          </label>
+
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-icon">🎮</span>
+            <span class="check-text">
+              <strong>Configurar gráficos</strong>
+              <small>Ajuste os gráficos dentro do seu jogo.</small>
+            </span>
+          </label>
+
+        </div>
+
+        <button class="secondary-button" id="resetChecklist">
+          ↻ RESETAR CHECKLIST
+        </button>
+
+        <div class="notice">
+          <strong>ℹ️ Informativo</strong>
+          <p>Este checklist não altera automaticamente o sistema Android. Ele ajuda você a realizar ajustes manualmente.</p>
+        </div>
+
+      </section>
+
+      <!-- GAMES -->
+      <section class="page" id="gamesPage">
+
+        <div class="page-heading">
+          <span class="eyebrow">GAMING LIBRARY</span>
+          <h2>MY <span>GAMES</span></h2>
+          <p>Escolha um jogo para visualizar dicas.</p>
+        </div>
+
+        <div class="search-box">
+          <span>🔎</span>
+          <input type="search" id="gameSearch" placeholder="Pesquisar jogo...">
+        </div>
+
+        <div class="games-list" id="gamesList">
+
+          <button class="game-card" data-game="Free Fire">
+            <div class="game-cover ff">🔥</div>
+            <div>
+              <h3>Free Fire</h3>
+              <p>Configurações de desempenho</p>
             </div>
-        </main>
+            <span class="arrow">›</span>
+          </button>
+
+          <button class="game-card" data-game="PUBG Mobile">
+            <div class="game-cover pubg">🎯</div>
+            <div>
+              <h3>PUBG Mobile</h3>
+              <p>Configurações de desempenho</p>
+            </div>
+            <span class="arrow">›</span>
+          </button>
+
+          <button class="game-card" data-game="Call of Duty Mobile">
+            <div class="game-cover cod">💥</div>
+            <div>
+              <h3>Call of Duty Mobile</h3>
+              <p>Configurações de desempenho</p>
+            </div>
+            <span class="arrow">›</span>
+          </button>
+
+          <button class="game-card" data-game="Minecraft">
+            <div class="game-cover mc">⛏️</div>
+            <div>
+              <h3>Minecraft</h3>
+              <p>Configurações de desempenho</p>
+            </div>
+            <span class="arrow">›</span>
+          </button>
+
+          <button class="game-card" data-game="Roblox">
+            <div class="game-cover roblox">🎲</div>
+            <div>
+              <h3>Roblox</h3>
+              <p>Configurações de desempenho</p>
+            </div>
+            <span class="arrow">›</span>
+          </button>
+
+        </div>
+
+        <div class="notice">
+          <strong>Games</strong>
+          <p>Os jogos apresentados são exemplos de uma biblioteca informativa. O PWA não inicia ou controla diretamente esses jogos.</p>
+        </div>
+
+      </section>
+
+      <!-- DEVICE -->
+      <section class="page" id="devicePage">
+
+        <div class="page-heading">
+          <span class="eyebrow">DEVICE CENTER</span>
+          <h2>MY <span>DEVICE</span></h2>
+          <p>Informações disponíveis pelo navegador.</p>
+        </div>
+
+        <div class="device-card">
+          <div class="device-icon">📱</div>
+          <h3 id="deviceName">Seu dispositivo</h3>
+          <p id="deviceOS">Detectando navegador...</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span>🧠</span>
+            <small>MEMÓRIA ESTIMADA</small>
+            <strong id="memoryInfo">Indisponível</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>🌐</span>
+            <small>CONEXÃO</small>
+            <strong id="networkInfo">Detectando</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>📏</span>
+            <small>RESOLUÇÃO</small>
+            <strong id="screenInfo">--</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>⚙️</span>
+            <small>PLATAFORMA</small>
+            <strong id="platformInfo">--</strong>
+          </div>
+        </div>
+
+        <div class="notice">
+          <strong>Limitações do navegador</strong>
+          <p>Essas informações são estimativas ou dados disponibilizados pelo navegador. Não representam uma leitura completa do hardware, temperatura ou FPS real.</p>
+        </div>
+
+      </section>
+
+      <!-- TIPS -->
+      <section class="page" id="tipsPage">
+
+        <div class="page-heading">
+          <span class="eyebrow">GAMING KNOWLEDGE</span>
+          <h2>FPS <span>TIPS</span></h2>
+          <p>Aprenda a configurar seu celular para jogar.</p>
+        </div>
+
+        <article class="tip-card">
+          <div class="tip-top">🎯</div>
+          <h3>Reduza os gráficos</h3>
+          <p>Em jogos competitivos, gráficos menores podem ajudar a manter uma taxa de quadros mais estável, dependendo do dispositivo.</p>
+        </article>
+
+        <article class="tip-card">
+          <div class="tip-top">🌡️</div>
+          <h3>Controle o aquecimento</h3>
+          <p>Evite jogar enquanto o aparelho está muito quente. O calor pode provocar redução automática de desempenho.</p>
+        </article>
+
+        <article class="tip-card">
+          <div class="tip-top">📶</div>
+          <h3>Melhore sua conexão</h3>
+          <p>Ping é diferente de FPS. Uma conexão estável pode melhorar a experiência online, mas não aumenta a taxa de quadros.</p>
+        </article>
+
+        <article class="tip-card">
+          <div class="tip-top">🔋</div>
+          <h3>Confira o modo de bateria</h3>
+          <p>O modo de economia de energia pode limitar desempenho em alguns aparelhos.</p>
+        </article>
+
+        <article class="tip-card">
+          <div class="tip-top">🖥️</div>
+          <h3>Use a taxa de atualização disponível</h3>
+          <p>Se o seu celular oferece 90 Hz ou 120 Hz, confira nas configurações se a opção está disponível e se o jogo também suporta.</p>
+        </article>
+
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="settingsPage">
+
+        <div class="page-heading">
+          <span class="eyebrow">APP CONTROL</span>
+          <h2>APP <span>SETTINGS</span></h2>
+          <p>Personalize o FPS BOOST.</p>
+        </div>
+
+        <div class="setting-card">
+          <div>
+            <h3>Instalar aplicativo</h3>
+            <p>Adicione o FPS BOOST à sua tela inicial.</p>
+          </div>
+          <button class="small-button" id="installButton">INSTALAR</button>
+        </div>
+
+        <div class="setting-card">
+          <div>
+            <h3>Vibração</h3>
+            <p>Feedback tátil ao interagir.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="vibrationToggle" checked>
+            <span></span>
+          </label>
+        </div>
+
+        <div class="setting-card">
+          <div>
+            <h3>Sobre o FPS BOOST</h3>
+            <p>Mobile Gaming Performance Center</p>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <div>
+            <h3>Versão</h3>
+            <p>FPS BOOST MOBILE · 1.0</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- GAME MODAL -->
+    <div class="modal" id="gameModal">
+      <div class="modal-box">
+        <button class="modal-close" id="closeModal">✕</button>
+        <div class="modal-game-icon">🎮</div>
+        <span class="eyebrow">GAME PROFILE</span>
+        <h2 id="modalGameTitle">Game</h2>
+        <div id="modalGameContent"></div>
+        <button class="primary-button" id="modalDone">ENTENDI</button>
+      </div>
     </div>
 
-    <!-- Bottom Audio Player Bar -->
-    <footer class="bg-[#12121a]/90 backdrop-blur border-t border-gray-800/80 p-4 shrink-0 flex flex-col md:flex-row items-center justify-between gap-4 z-20">
-        <div class="flex items-center space-x-4 w-full md:w-1/4">
-            <div class="w-14 h-14 rounded-2xl overflow-hidden border rgb-border shrink-0 relative flex items-center justify-center bg-gray-900">
-                <img id="current-img" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=150&q=80" alt="Capa" class="w-full h-full object-cover">
-            </div>
-            <div class="truncate">
-                <h4 id="current-title" class="text-sm font-bold text-white truncate">Selecione uma faixa</h4>
-                <p id="current-artist" class="text-xs rgb-text truncate font-medium">AuraStream RGB Engine</p>
-            </div>
-        </div>
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
 
-        <div class="flex flex-col items-center w-full md:w-2/4 space-y-2">
-            <div class="flex items-center space-x-6">
-                <button class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-shuffle"></i></button>
-                <button onclick="prevTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-backward-step text-lg"></i></button>
-                <button onclick="togglePlay()" id="play-btn" class="w-12 h-12 bg-gradient-to-tr from-pink-500 to-cyan-400 hover:scale-105 rounded-full flex items-center justify-center text-white transition shadow-lg shadow-pink-500/40 font-bold text-lg">
-                    <i class="fa-solid fa-play"></i>
-                </button>
-                <button onclick="nextTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-forward-step text-lg"></i></button>
-                <button class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-repeat"></i></button>
-            </div>
-            <div class="flex items-center space-x-3 w-full max-w-md">
-                <span id="time-current" class="text-xs text-gray-500 font-mono">0:00</span>
-                <input type="range" id="progress-bar" value="0" min="0" max="100" class="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-pink-500" oninput="seekTrack(this.value)">
-                <span id="time-duration" class="text-xs text-gray-500 font-mono">3:00</span>
-            </div>
-        </div>
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
 
-        <div class="flex items-center justify-end space-x-3 w-full md:w-1/4">
-            <i class="fa-solid fa-volume-high rgb-text"></i>
-            <input type="range" min="0" max="1" step="0.05" value="0.8" class="w-24 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyan-400" onchange="setVolume(this.value)">
-        </div>
-    </footer>
+      <button class="nav-item active" data-page="home">
+        <span>⌂</span>
+        <small>HOME</small>
+      </button>
 
-    <script>
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 700);
-            }, 1200);
-        });
+      <button class="nav-item" data-page="boost">
+        <span>⚡</span>
+        <small>BOOST</small>
+      </button>
 
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').classList.remove('hidden');
-        });
+      <button class="nav-item" data-page="games">
+        <span>🎮</span>
+        <small>GAMES</small>
+      </button>
 
-        document.getElementById('install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    document.getElementById('install-btn').classList.add('hidden');
-                }
-                deferredPrompt = null;
-            }
-        });
+      <button class="nav-item" data-page="tips">
+        <span>✦</span>
+        <small>TIPS</small>
+      </button>
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
-        }
+      <button class="nav-item" data-page="device">
+        <span>📱</span>
+        <small>DEVICE</small>
+      </button>
 
-        const tracks = [
-            { title: "Cyber Aurora", artist: "AuraRGB Engine", duration: 180, chord: [261.63, 329.63, 392.00], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80" },
-            { title: "Neon Lo-Fi Beats", artist: "AuraRGB Engine", duration: 210, chord: [220.00, 261.63, 329.63], img: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=300&q=80" },
-            { title: "Pulse Synthwave", artist: "AuraRGB Engine", duration: 195, chord: [174.61, 220.00, 261.63], img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=300&q=80" },
-            { title: "Digital Serenity", artist: "AuraRGB Engine", duration: 160, chord: [196.00, 246.94, 293.66], img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80" }
-        ];
+    </nav>
 
-        let currentTrackIndex = 0;
-        let isPlaying = false;
-        let audioCtx = null;
-        let oscillator = null;
-        let gainNode = null;
-        let timerInterval = null;
-        let currentTime = 0;
+  </div>
 
-        function renderTracks() {
-            const listContainer = document.getElementById('track-list');
-            listContainer.innerHTML = tracks.map((t, idx) => `
-                <div onclick="playTrack(${idx})" class="bg-[#12121a]/80 border border-gray-800 hover:border-pink-500/50 p-4 rounded-2xl flex items-center justify-between cursor-pointer transition group shadow-lg">
-                    <div class="flex items-center space-x-4 truncate">
-                        <img src="${t.img}" class="w-12 h-12 rounded-xl object-cover border border-gray-700 group-hover:border-pink-500 transition">
-                        <div class="truncate">
-                            <h4 class="text-sm font-bold text-white truncate group-hover:text-pink-400 transition">${t.title}</h4>
-                            <p class="text-xs text-gray-400 truncate">${t.artist}</p>
-                        </div>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition shrink-0 ml-2">
-                        <i class="fa-solid fa-play text-xs"></i>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function playTrack(index) {
-            currentTrackIndex = index;
-            const track = tracks[index];
-            document.getElementById('current-title').innerText = track.title;
-            document.getElementById('current-artist').innerText = track.artist;
-            document.getElementById('current-img').src = track.img;
-            
-            stopAudio();
-            startSynthAudio(track.chord);
-            isPlaying = true;
-            document.getElementById('play-btn').innerHTML = '<i class="fa-solid fa-pause"></i>';
-            startTimer();
-        }
-
-        function startSynthAudio(chord) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.connect(audioCtx.destination);
-
-            oscillator = audioCtx.createOscillator();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(chord[0], audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            oscillator.start();
-        }
-
-        function stopAudio() {
-            if (oscillator) {
-                try { oscillator.stop(); } catch(e){}
-                oscillator.disconnect();
-                oscillator = null;
-            }
-            clearInterval(timerInterval);
-            currentTime = 0;
-        }
-
-        function togglePlay() {
-            if (isPlaying) {
-                stopAudio();
-                isPlaying = false;
-                document.getElementById('play-btn').innerHTML = '<i class="fa-solid fa-play"></i>';
-            } else {
-                playTrack(currentTrackIndex);
-            }
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            currentTime = 0;
-            timerInterval = setInterval(() => {
-                currentTime++;
-                const progress = (currentTime / tracks[currentTrackIndex].duration) * 100;
-                document.getElementById('progress-bar').value = progress;
-                
-                let mins = Math.floor(currentTime / 60);
-                let secs = currentTime % 60;
-                document.getElementById('time-current').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-                if (currentTime >= tracks[currentTrackIndex].duration) {
-                    nextTrack();
-                }
-            }, 1000);
-        }
-
-        function nextTrack() {
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-            playTrack(currentTrackIndex);
-        }
-
-        function prevTrack() {
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-            playTrack(currentTrackIndex);
-        }
-
-        function setVolume(val) {
-            if (gainNode && audioCtx) {
-                gainNode.gain.setValueAtTime(val, audioCtx.currentTime);
-            }
-        }
-
-        function seekTrack(val) {
-            currentTime = Math.floor((val / 100) * tracks[currentTrackIndex].duration);
-        }
-
-        function switchTab(tab) {
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-library').classList.add('hidden');
-            document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition";
-            document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition";
-
-            if (tab === 'home') {
-                document.getElementById('view-home').classList.remove('hidden');
-                document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition";
-            } else {
-                document.getElementById('view-library').classList.remove('hidden');
-                document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition";
-            }
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const url = URL.createObjectURL(file);
-            tracks.push({ 
-                title: file.name.replace(/\.[^/.]+$/, ""), 
-                artist: "Upload Local", 
-                duration: 180, 
-                type: "local", 
-                url: url,
-                img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=150&q=80"
-            });
-            renderTracks();
-            
-            const lib = document.getElementById('library-list');
-            lib.innerHTML += `
-                <div class="bg-[#12121a] border border-gray-800 p-4 rounded-2xl flex items-center justify-between">
-                    <span class="text-sm font-bold text-white">${file.name}</span>
-                    <span class="text-xs text-cyan-400 font-semibold">Pronto para reprodução</span>
-                </div>
-            `;
-            switchTab('library');
-        }
-
-        renderTracks();
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
