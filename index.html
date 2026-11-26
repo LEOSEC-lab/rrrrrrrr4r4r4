@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraStream - Music Player PWA</title>
+    <title>AuraStream RGB - Music Player</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#8b5cf6">
+    <meta name="theme-color" content="#ec4899">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -14,30 +14,63 @@
             theme: {
                 extend: {
                     colors: {
-                        darker: '#0a0d14',
-                        card: '#161b22',
-                        primary: '#8b5cf6'
+                        darker: '#050508',
+                        card: '#12121a',
+                        rgbPink: '#ec4899',
+                        rgbCyan: '#06b6d4',
+                        rgbPurple: '#8b5cf6'
                     }
                 }
             }
         }
     </script>
+    <style>
+        @keyframes rgbGlow {
+            0% { border-color: #ec4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.3); }
+            33% { border-color: #06b6d4; box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+            66% { border-color: #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            100% { border-color: #ec4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.3); }
+        }
+        .rgb-border {
+            animation: rgbGlow 6s infinite;
+        }
+        @keyframes textRgb {
+            0% { color: #ec4899; }
+            33% { color: #06b6d4; }
+            66% { color: #8b5cf6; }
+            100% { color: #ec4899; }
+        }
+        .rgb-text {
+            animation: textRgb 6s infinite;
+        }
+    </style>
 </head>
-<body class="bg-darker text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="bg-darker text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden selection:bg-pink-500 selection:text-white">
+
+    <!-- Splash Screen / Intro -->
+    <div id="splash-screen" class="fixed inset-0 z-50 bg-darker flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative w-24 h-24 mb-6 rounded-3xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 p-1 animate-pulse shadow-2xl shadow-pink-500/50">
+            <div class="w-full h-full bg-darker rounded-[22px] flex items-center justify-center">
+                <i class="fa-solid fa-headphones text-4xl rgb-text"></i>
+            </div>
+        </div>
+        <h1 class="text-2xl font-black tracking-widest uppercase bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">AuraStream RGB</h1>
+        <p class="text-xs text-gray-500 mt-2 tracking-widest uppercase">Carregando Experiência Sonora...</p>
+    </div>
 
     <!-- Top Bar -->
-    <header class="flex justify-between items-center px-6 py-4 bg-darker/80 backdrop-blur border-b border-gray-800 shrink-0">
+    <header class="flex justify-between items-center px-6 py-4 bg-darker/90 backdrop-blur border-b border-gray-800/80 shrink-0 z-20">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+            <div class="w-10 h-10 bg-gradient-to-tr from-pink-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-pink-500/30">
                 <i class="fa-solid fa-waveform text-white text-lg"></i>
             </div>
-            <span class="text-xl font-bold tracking-wider bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">AuraStream</span>
+            <span class="text-xl font-black tracking-wider rgb-text">AuraStream <span class="text-xs px-2 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400">RGB</span></span>
         </div>
         <div class="flex items-center space-x-4">
-            <span id="network-status" class="px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span id="network-status" class="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <i class="fa-solid fa-circle text-[8px] mr-1"></i> Online
             </span>
-            <button id="install-btn" class="hidden px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-purple-600/30">
+            <button id="install-btn" class="hidden px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl text-sm font-bold transition shadow-lg shadow-pink-600/30">
                 <i class="fa-solid fa-download mr-2"></i> Instalar App
             </button>
         </div>
@@ -46,9 +79,9 @@
     <!-- Main Content Area -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-card/50 border-r border-gray-800 p-6 hidden md:flex flex-col justify-between shrink-0">
-            <nav class="space-y-2">
-                <a href="#" onclick="switchTab('home')" id="nav-home" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition">
+        <aside class="w-64 bg-card/60 border-r border-gray-800/80 p-6 hidden md:flex flex-col justify-between shrink-0">
+            <nav class="space-y-3">
+                <a href="#" onclick="switchTab('home')" id="nav-home" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition">
                     <i class="fa-solid fa-house w-5"></i><span>Início</span>
                 </a>
                 <a href="#" onclick="switchTab('library')" id="nav-library" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition">
@@ -59,35 +92,40 @@
                     <input type="file" id="local-upload" accept="audio/*" class="hidden" onchange="handleFileUpload(event)">
                 </label>
             </nav>
-            <div class="p-4 bg-gradient-to-b from-purple-900/20 to-indigo-900/10 border border-purple-500/20 rounded-2xl text-center">
-                <i class="fa-solid fa-headphones text-purple-400 text-2xl mb-2"></i>
-                <h4 class="text-sm font-semibold text-white">Aura Web Engine</h4>
-                <p class="text-xs text-gray-400 mt-1">Sintetizador e decodificador nativo ativado.</p>
+            <div class="p-4 bg-gradient-to-b from-pink-900/20 via-purple-900/10 to-cyan-900/20 border rgb-border rounded-2xl text-center">
+                <i class="fa-solid fa-bolt rgb-text text-xl mb-2"></i>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider">Modo RGB Ativo</h4>
+                <p class="text-[10px] text-gray-400 mt-1">Sintetizador e efeitos dinâmicos ligados.</p>
             </div>
         </aside>
 
         <!-- Dynamic View -->
         <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
             <div id="view-home" class="space-y-6">
-                <div class="bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-card border border-purple-500/20 rounded-3xl p-8 relative overflow-hidden">
+                <!-- Hero Banner com Imagem -->
+                <div class="relative rgb-border border rounded-3xl p-8 overflow-hidden shadow-2xl">
+                    <div class="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80" alt="Banner" class="w-full h-full object-cover opacity-20 filter brightness-75">
+                        <div class="absolute inset-0 bg-gradient-to-r from-darker via-darker/80 to-transparent"></div>
+                    </div>
                     <div class="relative z-10 max-w-lg">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">Destaque do Dia</span>
-                        <h1 class="text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white">Sons da Aurora</h1>
-                        <p class="text-gray-300 text-sm mb-6">Mergulhe em melodias relaxantes e sintetizadas em tempo real para foco e descanso.</p>
-                        <button onclick="playTrack(0)" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center space-x-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/30">Destaque RGB</span>
+                        <h1 class="text-3xl md:text-5xl font-black mt-4 mb-2 text-white">Cyber Aurora</h1>
+                        <p class="text-gray-300 text-sm mb-6">Sons sintetizados em alta frequência com imersão visual total e modo offline.</p>
+                        <button onclick="playTrack(0)" class="px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold rounded-xl shadow-lg shadow-pink-600/30 transition flex items-center space-x-2">
                             <i class="fa-solid fa-play"></i><span>Ouvir Agora</span>
                         </button>
                     </div>
                 </div>
 
-                <h2 class="text-xl font-bold text-white">Faixas Disponíveis</h2>
+                <h2 class="text-xl font-bold text-white flex items-center"><i class="fa-solid fa-fire mr-2 text-pink-500"></i> Faixas Disponíveis</h2>
                 <div id="track-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Preenchido via JavaScript -->
                 </div>
             </div>
 
             <div id="view-library" class="hidden space-y-6">
-                <h2 class="text-xl font-bold text-white">Minha Biblioteca & Uploads</h2>
+                <h2 class="text-xl font-bold text-white flex items-center"><i class="fa-solid fa-folder-open mr-2 text-cyan-400"></i> Minha Biblioteca & Uploads</h2>
                 <div id="library-list" class="space-y-3">
                     <!-- Preenchido via JavaScript -->
                 </div>
@@ -96,15 +134,15 @@
     </div>
 
     <!-- Bottom Audio Player Bar -->
-    <footer class="bg-card border-t border-gray-800 p-4 shrink-0 flex flex-col md:flex-row items-center justify-between gap-4">
-        <!-- Track Info -->
+    <footer class="bg-card/90 backdrop-blur border-t border-gray-800/80 p-4 shrink-0 flex flex-col md:flex-row items-center justify-between gap-4 z-20">
+        <!-- Track Info com Imagem -->
         <div class="flex items-center space-x-4 w-full md:w-1/4">
-            <div class="w-12 h-12 bg-purple-900/30 border border-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 font-bold shrink-0" id="current-art">
-                <i class="fa-solid fa-compact-disc animate-spin"></i>
+            <div id="current-art-container" class="w-14 h-14 rounded-2xl overflow-hidden border rgb-border shrink-0 relative flex items-center justify-center bg-gray-900">
+                <img id="current-img" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=150&q=80" alt="Capa" class="w-full h-full object-cover">
             </div>
             <div class="truncate">
-                <h4 id="current-title" class="text-sm font-semibold text-white truncate">Selecione uma faixa</h4>
-                <p id="current-artist" class="text-xs text-gray-400 truncate">AuraStream Engine</p>
+                <h4 id="current-title" class="text-sm font-bold text-white truncate">Selecione uma faixa</h4>
+                <p id="current-artist" class="text-xs rgb-text truncate font-medium">AuraStream RGB Engine</p>
             </div>
         </div>
 
@@ -113,28 +151,37 @@
             <div class="flex items-center space-x-6">
                 <button onclick="toggleShuffle()" id="shuffle-btn" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-shuffle"></i></button>
                 <button onclick="prevTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-backward-step text-lg"></i></button>
-                <button onclick="togglePlay()" id="play-btn" class="w-10 h-10 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white transition shadow-md shadow-purple-600/30">
+                <button onclick="togglePlay()" id="play-btn" class="w-12 h-12 bg-gradient-to-tr from-pink-500 to-cyan-400 hover:scale-105 rounded-full flex items-center justify-center text-white transition shadow-lg shadow-pink-500/40 font-bold text-lg">
                     <i class="fa-solid fa-play"></i>
                 </button>
                 <button onclick="nextTrack()" class="text-gray-300 hover:text-white transition"><i class="fa-solid fa-forward-step text-lg"></i></button>
                 <button onclick="toggleRepeat()" id="repeat-btn" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-repeat"></i></button>
             </div>
             <div class="flex items-center space-x-3 w-full max-w-md">
-                <span id="time-current" class="text-xs text-gray-500">0:00</span>
-                <input type="range" id="progress-bar" value="0" min="0" max="100" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500" oninput="seekTrack(this.value)">
-                <span id="time-duration" class="text-xs text-gray-500">3:00</span>
+                <span id="time-current" class="text-xs text-gray-500 font-mono">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" max="100" class="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-pink-500" oninput="seekTrack(this.value)">
+                <span id="time-duration" class="text-xs text-gray-500 font-mono">3:00</span>
             </div>
         </div>
 
         <!-- Volume & Extras -->
         <div class="flex items-center justify-end space-x-3 w-full md:w-1/4">
-            <i class="fa-solid fa-volume-high text-gray-400"></i>
-            <input type="range" min="0" max="1" step="0.05" value="0.8" class="w-24 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500" onchange="setVolume(this.value)">
+            <i class="fa-solid fa-volume-high rgb-text"></i>
+            <input type="range" min="0" max="1" step="0.05" value="0.8" class="w-24 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyan-400" onchange="setVolume(this.value)">
         </div>
     </footer>
 
-    <!-- Script de Aplicação e Áudio -->
+    <!-- Script Principal -->
     <script>
+        // Ocultar Splash Screen após carregar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 700);
+            }, 1200);
+        });
+
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -163,20 +210,20 @@
         function updateNetworkStatus() {
             const statusEl = document.getElementById('network-status');
             if (navigator.onLine) {
-                statusEl.className = "px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                statusEl.className = "px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                 statusEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1"></i> Online';
             } else {
-                statusEl.className = "px-3 py-1 text-xs font-medium rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                statusEl.className = "px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
                 statusEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1"></i> Offline';
             }
         }
 
-        // Playlist & Player State
+        // Tracks com imagens reais do Unsplash
         const tracks = [
-            { title: "Sons da Aurora", artist: "AuraSynth Engine", duration: 180, type: "synth", chord: [261.63, 329.63, 392.00] },
-            { title: "Nebulosa Lo-Fi", artist: "AuraSynth Engine", duration: 210, type: "synth", chord: [220.00, 261.63, 329.63] },
-            { title: "Pulso Synthwave", artist: "AuraSynth Engine", duration: 195, type: "synth", chord: [174.61, 220.00, 261.63] },
-            { title: "Piano Sereno", artist: "AuraSynth Engine", duration: 160, type: "synth", chord: [196.00, 246.94, 293.66] }
+            { title: "Cyber Aurora", artist: "AuraRGB Engine", duration: 180, chord: [261.63, 329.63, 392.00], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80" },
+            { title: "Neon Lo-Fi Beats", artist: "AuraRGB Engine", duration: 210, chord: [220.00, 261.63, 329.63], img: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=300&q=80" },
+            { title: "Pulse Synthwave", artist: "AuraRGB Engine", duration: 195, chord: [174.61, 220.00, 261.63], img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=300&q=80" },
+            { title: "Digital Serenity", artist: "AuraRGB Engine", duration: 160, chord: [196.00, 246.94, 293.66], img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80" }
         ];
 
         let currentTrackIndex = 0;
@@ -190,17 +237,17 @@
         function renderTracks() {
             const listContainer = document.getElementById('track-list');
             listContainer.innerHTML = tracks.map((t, idx) => `
-                <div onclick="playTrack(${idx})" class="bg-card border border-gray-800/80 hover:border-purple-500/40 p-4 rounded-2xl flex items-center justify-between cursor-pointer transition group">
-                    <div class="flex items-center space-x-3 truncate">
-                        <div class="w-10 h-10 bg-purple-600/10 text-purple-400 rounded-xl flex items-center justify-center font-bold group-hover:bg-purple-600 group-hover:text-white transition">
-                            <i class="fa-solid fa-play text-xs"></i>
-                        </div>
+                <div onclick="playTrack(${idx})" class="bg-card/80 border border-gray-800 hover:border-pink-500/50 p-4 rounded-2xl flex items-center justify-between cursor-pointer transition group shadow-lg">
+                    <div class="flex items-center space-x-4 truncate">
+                        <img src="${t.img || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=150&q=80'}" class="w-12 h-12 rounded-xl object-cover border border-gray-700 group-hover:border-pink-500 transition">
                         <div class="truncate">
-                            <h4 class="text-sm font-semibold text-white truncate">${t.title}</h4>
+                            <h4 class="text-sm font-bold text-white truncate group-hover:text-pink-400 transition">${t.title}</h4>
                             <p class="text-xs text-gray-400 truncate">${t.artist}</p>
                         </div>
                     </div>
-                    <span class="text-xs text-gray-500 ml-2">3:00</span>
+                    <div class="w-8 h-8 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition shrink-0 ml-2">
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </div>
                 </div>
             `).join('');
         }
@@ -210,6 +257,7 @@
             const track = tracks[index];
             document.getElementById('current-title').innerText = track.title;
             document.getElementById('current-artist').innerText = track.artist;
+            document.getElementById('current-img').src = track.img || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=150&q=80';
             
             stopAudio();
             startSynthAudio(track.chord);
@@ -299,10 +347,10 @@
 
             if (tab === 'home') {
                 document.getElementById('view-home').classList.remove('hidden');
-                document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition";
+                document.getElementById('nav-home').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition";
             } else {
                 document.getElementById('view-library').classList.remove('hidden');
-                document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400 font-medium transition";
+                document.getElementById('nav-library').className = "flex items-center space-x-3 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 font-semibold transition";
             }
         }
 
@@ -310,14 +358,21 @@
             const file = event.target.files[0];
             if (!file) return;
             const url = URL.createObjectURL(file);
-            tracks.push({ title: file.name.replace(/\.[^/.]+$/, ""), artist: "Arquivo Local", duration: 180, type: "local", url: url });
+            tracks.push({ 
+                title: file.name.replace(/\.[^/.]+$/, ""), 
+                artist: "Upload Local", 
+                duration: 180, 
+                type: "local", 
+                url: url,
+                img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=150&q=80"
+            });
             renderTracks();
             
             const lib = document.getElementById('library-list');
             lib.innerHTML += `
                 <div class="bg-card border border-gray-800 p-4 rounded-2xl flex items-center justify-between">
-                    <span class="text-sm font-semibold text-white">${file.name}</span>
-                    <span class="text-xs text-purple-400">Pronto para reprodução</span>
+                    <span class="text-sm font-bold text-white">${file.name}</span>
+                    <span class="text-xs text-cyan-400 font-semibold">Pronto para reprodução</span>
                 </div>
             `;
             switchTab('library');
